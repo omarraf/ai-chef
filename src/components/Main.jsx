@@ -1,25 +1,33 @@
 import React from "react"
 import { getRecipeFromMistral } from "../ai"
+import Recipe from "./Recipe"
+
 
 export default function Main() {
     const [ingredients, setIngredients] = React.useState([])
     const [recipeMarkdown, setRecipeMarkdown] = React.useState("")
     const [recipeShown, setRecipeShown] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
+    
+
+    const recipeRef = React.useRef(null)
 
 
     async function toggleRecipeShown() {
-        setLoading(true)
-    try {
-        const recipe = await getRecipeFromMistral(ingredients)
-        setRecipeMarkdown(recipe)
-        setRecipeShown(true)
-    } catch (err) {
-        console.error(err)
-    } finally {
-        setLoading(false)
-    }
-    }
+            setLoading(true)
+            try {
+                const recipe = await getRecipeFromMistral(ingredients)
+                setRecipeMarkdown(recipe)
+                setRecipeShown(true)
+            } catch (err) {
+                console.error(err)
+            } finally {
+                setLoading(false)
+            }
+            if (recipeRef.current) {
+                recipeRef.current.scrollIntoView({ behavior: "smooth" })
+            }
+        }
 
     function addIngredient(formData) {
         const newIngredient = formData.get("ingredient")
@@ -62,14 +70,7 @@ export default function Main() {
                 </section>
             )}
 
-            {recipeShown && (
-                <section>
-                    <h2>Chef Mistral Recommends:</h2>
-                    <article className="suggested-recipe-container" aria-live="polite">
-                        <pre style={{ whiteSpace: "pre-wrap" }}>{recipeMarkdown}</pre>
-                    </article>
-                </section>
-            )}
+            {recipeShown && <Recipe markdown={recipeMarkdown} />}
         </main>
     )
 }
