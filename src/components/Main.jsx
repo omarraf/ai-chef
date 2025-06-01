@@ -34,8 +34,18 @@ export default function Main() {
         setIngredients(prevIngredients => [...prevIngredients, newIngredient])
     }
 
-    const ingredientsListItems = ingredients.map(ingredient => (
-        <li key={ingredient}>{ingredient}</li>
+    const ingredientsListItems = ingredients.map((ingredient, index) => (
+        <li key={ingredient}>
+            {ingredient}
+            <button
+                className="remove-btn"
+                onClick={() =>
+                    setIngredients(prev => prev.filter((_, i) => i !== index))
+                }
+            >
+                ✕
+            </button>
+        </li>
     ))
 
     return (
